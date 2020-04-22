@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX_LINE 10000
+void search_stream(FILE *in, char filename[], char search[]);
+int main (int argc, char *argv[]) {
+    if (argc < 2) {
+         fprintf(stderr, "Usage: %s <prefix> <files>\n", argv[0]);
+        return 1;
+    } if (argc == 2) {
+        search_stream(stdin, "<stdin>", argv[1]);
+    } else {
+        int argument = 2;
+        while (argument < argc) {
+            FILE *in = fopen(argv[argument], "r");
+        
+            if (in == NULL) {
+                perror(argv[argument]);
+                return 1;
+            }
+            search_stream(in, argv[argument], argv[1]);
+            argument++;
+        }
+    }
+    return 0;
+}
+        
+void search_stream(FILE *in, char filename[], char search[]) {
+    char line[MAX_LINE];
+    int line_number = 0;
+    while (fgets(line, MAX_LINE, in) != NULL) {
+        if (strstr(line, search) != NULL) {
+            printf("%s:%d:%s", filename, line_number, line);
+        }
+        line_number++;
+    }
+    //printf("NOT FOUND\n");
+}
